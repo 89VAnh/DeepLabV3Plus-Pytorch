@@ -128,7 +128,7 @@ def get_dataset(opts):
         val_dst = VOCSegmentation(root=opts.data_root, year=opts.year,
                                   image_set='val', download=False, transform=val_transform)
 
-    if opts.dataset == 'cityscapes':
+    elif opts.dataset == 'cityscapes':
         train_transform = et.ExtCompose([
             # et.ExtResize( 512 ),
             et.ExtRandomCrop(size=(opts.crop_size, opts.crop_size)),
@@ -151,11 +151,10 @@ def get_dataset(opts):
         val_dst = Cityscapes(root=opts.data_root,
                              split='val', transform=val_transform)
         
-    if opts.dataset == 'breast_ultrasound':
+    elif opts.dataset == 'breast_ultrasound':
         train_transform = et.ExtCompose([
-            et.ExtResize( 512 ),
-            et.ExtRandomScale((0.5, 2.0)),
-            et.ExtRandomCrop(size=(opts.crop_size, opts.crop_size), pad_if_needed=True),
+            et.ExtResize(size=(opts.crop_size, opts.crop_size)),
+            et.ExtRandomCrop(size=(opts.crop_size, opts.crop_size)),
             et.ExtRandomHorizontalFlip(),
             et.ExtToTensor(),
             et.ExtNormalize(mean=[0.485, 0.456, 0.406],
@@ -163,14 +162,16 @@ def get_dataset(opts):
         ])
         
         val_transform = et.ExtCompose([
-                et.ExtToTensor(),
-                et.ExtNormalize(mean=[0.485, 0.456, 0.406],
-                                std=[0.229, 0.224, 0.225]),
+            et.ExtResize(size=(opts.crop_size, opts.crop_size)),
+            et.ExtToTensor(),
+            et.ExtNormalize(mean=[0.485, 0.456, 0.406],
+                            std=[0.229, 0.224, 0.225]),
         ])
         
         train_dst = BreastUltrasoundDataset(image_set='train', 
                                             transform=train_transform)
-        val_dst = BreastUltrasoundDataset(image_set='val', transform=val_transform)
+        val_dst = BreastUltrasoundDataset(image_set='val', 
+                                          transform=val_transform)
     
     return train_dst, val_dst
 

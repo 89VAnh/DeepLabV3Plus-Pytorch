@@ -55,11 +55,12 @@ class BreastUltrasoundDataset(data.Dataset):
         mask = Image.open(mask_path).convert("L")  # Load mask as grayscale
         
         # Convert mask to binary (foreground is 1, background is 0)
-        # mask[mask == 255] = 1  # Convert mask values
+        mask = Image.fromarray((np.array(mask) > 0).astype(np.uint8) * 255)
 
         # Apply transformations if provided
         if self.transform is not None:
             image, mask = self.transform(image, mask)
+        
         return image, mask
 
     def __len__(self):
@@ -78,27 +79,3 @@ class BreastUltrasoundDataset(data.Dataset):
             RGB image: An RGB image representing the decoded mask.
         """
         return cls.cmap[mask]
-    
-# Usage Example:
-# from torch.utils.data import DataLoader
-# from torchvision import transforms
-#
-# train_transforms = transforms.Compose([
-#     transforms.ToPILImage(),
-#     transforms.Resize((256, 256)),
-#     transforms.ToTensor(),
-# ])
-#
-# dataset = BreastUltrasoundDataset(image_set='train', transform=train_transforms)
-# dataloader = DataLoader(dataset, batch_size=16, shuffle=True)
-
-if __name__ == "__main__":
-    # Simple test to check dataset loading and mask decoding
-    dataset = BreastUltrasoundDataset(image_set='train')
-    print(f"Total images in dataset: {len(dataset)}")
-    
-    # Test mask decoding
-    img, mask = dataset[0]
-    decoded_mask = BreastUltrasoundDataset.decode_target(mask)
-    
-    print(f"Decoded Mask Shape: {decoded_mask.shape}")  # Should be (H, W, 3)
