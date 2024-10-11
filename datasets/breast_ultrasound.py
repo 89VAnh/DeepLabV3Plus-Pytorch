@@ -59,10 +59,7 @@ class BreastUltrasoundDataset(data.Dataset):
 
         # Apply transformations if provided
         if self.transform is not None:
-            transformed = self.transform(image, mask)  # Convert PIL Image to numpy for transformation
-            image = transformed["image"]
-            mask = transformed["mask"]
-
+            image, target = self.transform(image, mask)
         return image, mask
 
     def __len__(self):
