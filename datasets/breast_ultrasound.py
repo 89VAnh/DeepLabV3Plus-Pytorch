@@ -55,7 +55,7 @@ class BreastUltrasoundDataset(data.Dataset):
         mask = Image.open(mask_path).convert("L")  # Load mask as grayscale
         
         # Convert mask to binary (foreground is 1, background is 0)
-        mask = Image.fromarray((np.array(mask) > 0).astype(np.uint8) * 255)
+        mask = Image.fromarray((np.array(mask) > 0).astype(np.uint8))
 
         # Apply transformations if provided
         if self.transform is not None:
