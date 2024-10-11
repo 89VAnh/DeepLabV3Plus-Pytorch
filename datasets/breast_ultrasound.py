@@ -59,7 +59,7 @@ class BreastUltrasoundDataset(data.Dataset):
 
         # Apply transformations if provided
         if self.transform is not None:
-            image, target = self.transform(image, mask)
+            image, mask = self.transform(image, mask)
         return image, mask
 
     def __len__(self):
