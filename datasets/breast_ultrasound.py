@@ -55,12 +55,10 @@ class BreastUltrasoundDataset(data.Dataset):
         mask = Image.open(mask_path).convert("L")  # Load mask as grayscale
         
         # Convert mask to binary (foreground is 1, background is 0)
-        mask = np.array(mask)  # Convert mask to numpy array
-        mask[mask == 255] = 1  # Convert mask values
+        # mask[mask == 255] = 1  # Convert mask values
 
         # Apply transformations if provided
         if self.transform is not None:
-            image=np.array(image)
             transformed = self.transform(image, mask)  # Convert PIL Image to numpy for transformation
             image = transformed["image"]
             mask = transformed["mask"]
