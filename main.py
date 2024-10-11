@@ -153,7 +153,8 @@ def get_dataset(opts):
         
     if opts.dataset == 'breast_ultrasound':
         train_transform = et.ExtCompose([
-               et.ExtRandomScale((0.5, 2.0)),
+            et.ExtResize( 512 ),
+            et.ExtRandomScale((0.5, 2.0)),
             et.ExtRandomCrop(size=(opts.crop_size, opts.crop_size), pad_if_needed=True),
             et.ExtRandomHorizontalFlip(),
             et.ExtToTensor(),
