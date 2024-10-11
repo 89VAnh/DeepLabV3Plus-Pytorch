@@ -55,23 +55,33 @@ class StreamSegMetrics(_StreamMetrics):
         return hist
 
     def get_results(self):
-        """Returns accuracy score evaluation result.
-            - overall accuracy
-            - mean accuracy
-            - mean IU
-            - fwavacc
-        """
-        hist = self.confusion_matrix
-        acc = np.diag(hist).sum() / hist.sum()
-        acc_cls = np.diag(hist) / hist.sum(axis=1)
-        acc_cls = np.nanmean(acc_cls)
-        iu = np.diag(hist) / (hist.sum(axis=1) + hist.sum(axis=0) - np.diag(hist))
-        mean_iu = np.nanmean(iu)
-        freq = hist.sum(axis=1) / hist.sum()
-        fwavacc = (freq[freq > 0] * iu[freq > 0]).sum()
-        cls_iu = dict(zip(range(self.n_classes), iu))
+            """Returns accuracy score evaluation result.
+                - overall accuracy
+                - mean accuracy
+                - mean IU
+                - fwavacc
+            """
+            hist = self.confusion_matrix
+            total_correct = np.diag(hist).sum()
+            total_pixels = hist.sum()
 
-        return {
+            # Overall accuracy
+            acc = total_correct / total_pixels if total_pixels > 0 else 0.0
+
+            # Mean accuracy
+            acc_cls = np.nanmean(np.diag(hist) / (hist.sum(axis=1) + 1e-6))  # Add epsilon to avoid division by zero
+
+            # IoU
+            iu = np.nan_to_num(np.diag(hist) / (hist.sum(axis=1) + hist.sum(axis=0) - np.diag(hist) + 1e-6))  # Add epsilon
+            mean_iu = np.nanmean(iu)
+
+            # Frequency weighted accuracy
+            freq = hist.sum(axis=1) / total_pixels if total_pixels > 0 else 0.0
+            fwavacc = (freq[freq > 0] * iu[freq > 0]).sum()
+
+            cls_iu = dict(zip(range(self.n_classes), iu))
+
+            return {
                 "Overall Acc": acc,
                 "Mean Acc": acc_cls,
                 "FreqW Acc": fwavacc,
