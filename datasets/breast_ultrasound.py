@@ -21,7 +21,8 @@ class BreastUltrasoundDataset(data.Dataset):
         self.root = os.path.expanduser(root)
         self.image_set = image_set
         self.transform = transform
-        self.types = ["benign", "malignant", "normal"]  # Classes in the dataset
+        # self.types = ["benign", "malignant", "normal"]  # Classes in the dataset
+        self.types = ["benign", "malignant"]  # Classes in the dataset
         self.img_path_lst = []
 
         # Collect all image paths
