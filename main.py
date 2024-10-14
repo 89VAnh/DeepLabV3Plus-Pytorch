@@ -173,6 +173,28 @@ def get_dataset(opts):
         val_dst = BreastUltrasoundDataset(image_set='val', 
                                           transform=val_transform)
     
+    elif opts.dataset == 'isic':
+        train_transform = et.ExtCompose([
+            et.ExtResize(size=(opts.crop_size, opts.crop_size)),
+            et.ExtRandomCrop(size=(opts.crop_size, opts.crop_size)),
+            et.ExtRandomHorizontalFlip(),
+            et.ExtToTensor(),
+            et.ExtNormalize(mean=[0.485, 0.456, 0.406],
+                            std=[0.229, 0.224, 0.225]),
+        ])
+        
+        val_transform = et.ExtCompose([
+            et.ExtResize(size=(opts.crop_size, opts.crop_size)),
+            et.ExtToTensor(),
+            et.ExtNormalize(mean=[0.485, 0.456, 0.406],
+                            std=[0.229, 0.224, 0.225]),
+        ])
+        
+        train_dst = BreastUltrasoundDataset(image_set='train', 
+                                            transform=train_transform)
+        val_dst = BreastUltrasoundDataset(image_set='val', 
+                                          transform=val_transform)
+    
     return train_dst, val_dst
 
 
@@ -238,6 +260,8 @@ def main():
     elif opts.dataset.lower() == 'cityscapes':
         opts.num_classes = 19
     elif opts.dataset.lower() == 'breast_ultrasound':
+        opts.num_classes = 2
+    elif opts.dataset.lower() == 'isic':
         opts.num_classes = 2
 
     # Setup visualization
