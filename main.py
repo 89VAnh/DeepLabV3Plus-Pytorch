@@ -188,7 +188,7 @@ def get_dataset(opts):
         ])
         
         # Initialize the dataset
-        dataset = ISICDataset()
+        dataset = ISICDataset(transform=train_transform)
 
         # Set your desired split ratio, e.g., 80% train and 20% validation
         train_ratio = 0.8
