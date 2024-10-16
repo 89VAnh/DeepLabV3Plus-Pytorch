@@ -47,7 +47,7 @@ class ISICDataset(Dataset):
         mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
 
         # Convert image from BGR to RGB
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         # Convert mask to binary (foreground is 1, background is 0)
         _, mask = cv2.threshold(mask, 127, 255, cv2.THRESH_BINARY)
@@ -55,12 +55,10 @@ class ISICDataset(Dataset):
 
         # Apply transformations if provided
         if self.transform is not None:
-            augmentations = self.transform(image=img, mask=mask)
-            img = augmentations['image']
-            mask = augmentations['mask']
+            image, mask = self.transform(image, mask)
 
         # Convert numpy arrays to PyTorch tensors
-        img = torch.from_numpy(img).permute(2, 0, 1).float() / 255.  # Normalize image to [0, 1]
+        img = torch.from_numpy(image).permute(2, 0, 1).float() / 255.  # Normalize image to [0, 1]
         mask = torch.from_numpy(mask).unsqueeze(0).float()  # Add channel dimension
 
         return img, mask
