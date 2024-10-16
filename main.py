@@ -191,16 +191,10 @@ def get_dataset(opts):
                             std=[0.229, 0.224, 0.225]),
         ])
         
-        # Initialize the dataset
-        dataset = ISICDataset(transform=train_transform)
-
-        # Set your desired split ratio, e.g., 80% train and 20% validation
-        train_ratio = 0.8
-        train_size = int(train_ratio * len(dataset))
-        val_size = len(dataset) - train_size
-
-        # Split the dataset into training and validation sets
-        train_dst, val_dst = random_split(dataset, [train_size, val_size])
+        train_dst = ISICDataset(image_set='train', 
+                                transform=train_transform)
+        val_dst = ISICDataset(image_set='val', 
+                                transform=val_transform)
     
     return train_dst, val_dst
 
