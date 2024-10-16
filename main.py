@@ -154,7 +154,6 @@ def get_dataset(opts):
         
     elif opts.dataset == 'breast_ultrasound':
         train_transform = et.ExtCompose([
-            et.ExtResize(size=(opts.crop_size, opts.crop_size)),
             et.ExtRandomCrop(size=(opts.crop_size, opts.crop_size)),
             et.ExtRandomHorizontalFlip(),
             et.ExtToTensor(),
@@ -163,7 +162,6 @@ def get_dataset(opts):
         ])
         
         val_transform = et.ExtCompose([
-            et.ExtResize(size=(opts.crop_size, opts.crop_size)),
             et.ExtToTensor(),
             et.ExtNormalize(mean=[0.485, 0.456, 0.406],
                             std=[0.229, 0.224, 0.225]),
@@ -176,7 +174,6 @@ def get_dataset(opts):
     
     elif opts.dataset == 'isic':
         train_transform = et.ExtCompose([
-            et.ExtResize(size=(opts.crop_size, opts.crop_size)),
             et.ExtRandomCrop(size=(opts.crop_size, opts.crop_size)),
             et.ExtRandomHorizontalFlip(),
             et.ExtToTensor(),
@@ -185,7 +182,6 @@ def get_dataset(opts):
         ])
         
         val_transform = et.ExtCompose([
-            et.ExtResize(size=(opts.crop_size, opts.crop_size)),
             et.ExtToTensor(),
             et.ExtNormalize(mean=[0.485, 0.456, 0.406],
                             std=[0.229, 0.224, 0.225]),
