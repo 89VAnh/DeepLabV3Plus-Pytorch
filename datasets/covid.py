@@ -15,7 +15,7 @@ class COVIDQUExDataset(Dataset):
         transform (callable, optional): Optional transform to be applied on a sample.
     """
     
-    def __init__(self, root_dir = '/kaggle/input/Infection Segmentation Data', phase='train', image_type='all', transform=None):
+    def __init__(self, root_dir = '/kaggle/input/covidqu/Infection Segmentation Data', phase='train', image_type='all', transform=None):
         self.root_dir = root_dir
         self.image_type = image_type
         self.phase = phase.capitalize()  # 'train', 'val', or 'test'
