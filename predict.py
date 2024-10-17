@@ -1,23 +1,17 @@
-from torch.utils.data import dataset
 from tqdm import tqdm
 import network
 import utils
 import os
-import random
 import argparse
-import numpy as np
 
 from torch.utils import data
-from datasets import VOCSegmentation, Cityscapes, BreastUltrasoundDataset
+from datasets import VOCSegmentation, Cityscapes, BreastUltrasoundDataset, ISICDataset
 from torchvision import transforms as T
-from metrics import StreamSegMetrics
 
 import torch
 import torch.nn as nn
 
 from PIL import Image
-import matplotlib
-import matplotlib.pyplot as plt
 from glob import glob
 
 def get_argparser():
@@ -27,7 +21,7 @@ def get_argparser():
     parser.add_argument("--input", type=str, required=True,
                         help="path to a single image or image directory")
     parser.add_argument("--dataset", type=str, default='voc',
-                        choices=['voc', 'cityscapes', 'breast_ultrasound'], help='Name of training set')
+                        choices=['voc', 'cityscapes', 'breast_ultrasound', 'isic'], help='Name of training set')
 
     # Deeplab Options
     available_models = sorted(name for name in network.modeling.__dict__ if name.islower() and \
@@ -69,6 +63,9 @@ def main():
     elif opts.dataset.lower() == 'breast_ultrasound':
         opts.num_classes = 2
         decode_fn = BreastUltrasoundDataset.decode_target
+    elif opts.dataset.lower() == 'isic':
+        opts.num_classes = 2
+        decode_fn = ISICDataset.decode_target
 
     os.environ['CUDA_VISIBLE_DEVICES'] = opts.gpu_id
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
