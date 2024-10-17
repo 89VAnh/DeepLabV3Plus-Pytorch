@@ -15,10 +15,10 @@ class COVIDQUExDataset(Dataset):
         transform (callable, optional): Optional transform to be applied on a sample.
     """
     
-    def __init__(self, root_dir, image_type='all', image_set='train', transform=None):
+    def __init__(self, root_dir = '/kaggle/input/Infection Segmentation Data', phase='train', image_type='all', transform=None):
         self.root_dir = root_dir
         self.image_type = image_type
-        self.image_set = image_set  # 'train' or 'test'
+        self.phase = phase.capitalize()  # 'train', 'val', or 'test'
         self.transform = transform
 
         self.data = []
@@ -31,8 +31,8 @@ class COVIDQUExDataset(Dataset):
         
         # Collect image and mask paths for the specified types and phase
         for img_type in image_types:
-            img_dir = os.path.join(root_dir, 'Infection Segmentation Data', self.phase, img_type, 'images', self.image_set)
-            mask_dir = os.path.join(root_dir, 'Infection Segmentation Data', self.phase, img_type, 'infection masks', self.image_set)
+            img_dir = os.path.join(root_dir, 'Infection Segmentation Data', self.phase, img_type, 'images')
+            mask_dir = os.path.join(root_dir, 'Infection Segmentation Data', self.phase, img_type, 'infection masks')
             
             for img_name in os.listdir(img_dir):
                 if img_name.endswith('.png'):

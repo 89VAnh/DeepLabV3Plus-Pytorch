@@ -7,7 +7,7 @@ import argparse
 import numpy as np
 
 from torch.utils import data
-from datasets import VOCSegmentation, Cityscapes, BreastUltrasoundDataset, ISICDataset
+from datasets import VOCSegmentation, Cityscapes, BreastUltrasoundDataset, ISICDataset, COVIDQUExDataset
 from utils import ext_transforms as et
 from metrics import StreamSegMetrics
 
@@ -28,7 +28,7 @@ def get_argparser():
     parser.add_argument("--data_root", type=str, default='./datasets/data',
                         help="path to Dataset")
     parser.add_argument("--dataset", type=str, default='voc',
-                        choices=['voc', 'cityscapes', 'breast_ultrasound', 'isic'], help='Name of dataset')
+                        choices=['voc', 'cityscapes', 'breast_ultrasound', 'isic', 'covid'], help='Name of dataset')
     parser.add_argument("--num_classes", type=int, default=None,
                         help="num classes (default: None)")
 
@@ -196,6 +196,28 @@ def get_dataset(opts):
         val_dst = ISICDataset(image_set='val', 
                                 transform=val_transform)
     
+    elif opts.dataset == 'covid':
+        train_transform = et.ExtCompose([
+            et.ExtResize(size=(opts.crop_size, opts.crop_size)),
+            et.ExtRandomCrop(size=(opts.crop_size, opts.crop_size)),
+            et.ExtRandomHorizontalFlip(),
+            et.ExtToTensor(),
+            et.ExtNormalize(mean=[0.485, 0.456, 0.406],
+                            std=[0.229, 0.224, 0.225]),
+        ])
+        
+        val_transform = et.ExtCompose([
+            et.ExtResize(size=(opts.crop_size, opts.crop_size)),
+            et.ExtToTensor(),
+            et.ExtNormalize(mean=[0.485, 0.456, 0.406],
+                            std=[0.229, 0.224, 0.225]),
+        ])
+        
+        train_dst = COVIDQUExDataset(phase='train', 
+                                transform=train_transform)
+        val_dst = COVIDQUExDataset(phase='val', 
+                                transform=val_transform)
+    
     return train_dst, val_dst
 
 
@@ -264,6 +286,10 @@ def main():
         opts.num_classes = 2
     elif opts.dataset.lower() == 'isic':
         opts.num_classes = 2
+    elif opts.dataset.lower() == 'covid':
+        opts.num_classes = 2
+    else:
+        raise NotImplementedError
 
     # Setup visualization
     vis = Visualizer(port=opts.vis_port,
