@@ -61,7 +61,10 @@ class COVIDQUExDataset(Dataset):
 
         # Load infection mask
         mask = Image.open(img_dict['mask']).convert('L')  # Load in grayscale
-
+        
+        # Convert mask to binary (foreground is 1, background is 0)
+        mask = Image.fromarray((np.array(mask) > 0).astype(np.uint8))
+        
         # Apply transforms if any
         if self.transform:
             image, mask = self.transform(image, mask)
